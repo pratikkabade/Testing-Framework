@@ -1,0 +1,16 @@
+{
+  "name": "testing-framework-backend",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "python-shell": "^5.0.0"
+  }
+}
