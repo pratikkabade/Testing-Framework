@@ -1,6 +1,3 @@
-# name2
-# details, of, script2
-
 # import unittest
 # from selenium import webdriver
 # from selenium.webdriver.common.keys import Keys
