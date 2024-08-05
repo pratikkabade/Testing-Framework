@@ -1,14 +1,16 @@
+# name1
+# details, of, script
+
 # import os
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 # from datetime import datetime
 # import time
 
-# base_path = "output/Netcool/0"
-# if not os.path.exists(base_path):
-#     os.makedirs(base_path)
-# current_time = datetime.now().strftime("%d-%m-%Y")
-# screenshot_path = os.path.join(base_path, f"{current_time}.png")
+# BASE_PATH = "output/Netcool/0"
+# if not os.path.exists(BASE_PATH):os.makedirs(BASE_PATH)
+# current_time = datetime.now().strftime("%d-%m-%Y %H-%M-%S")
+# screenshot_path = os.path.join(BASE_PATH, f"{current_time}.png")
 
 
 # url = "http://localhost:5173/"

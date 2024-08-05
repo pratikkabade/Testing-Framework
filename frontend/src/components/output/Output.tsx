@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
-import { DownloadButton } from "./visuals/DownloadButton";
+import { DownloadButton } from "../layout/DownloadButton";
 
 type scriptProp = {
     resultC: string;

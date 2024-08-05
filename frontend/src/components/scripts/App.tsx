@@ -1,37 +1,55 @@
 import { useEffect, useState } from "react";
-import { Status } from "../visuals/Status";
-import { SingleRunButton } from "../visuals/SingleRunButton";
-import { MultipleRunButton } from "../visuals/MultipleRunButton";
-import { SCCDScriptList } from "../../constants/List";
+import { Status } from "../layout/Status";
+import { SingleRunButton } from "../layout/SingleRunButton";
+import { MultipleRunButton } from "../layout/MultipleRunButton";
 import { URL } from "../../constants/URL";
 
-type SCCDscriptProp = {
-    selectedScriptCS: string;
-    setResultCS: React.Dispatch<React.SetStateAction<string>>;
-    setSelectedScriptCS: React.Dispatch<React.SetStateAction<string>>;
-    setScriptsListCS: React.Dispatch<React.SetStateAction<string>>;
+type AppProp = {
+    name:string;
+    selectedScriptCA: string;
+    setResultCA: React.Dispatch<React.SetStateAction<string>>;
+    setSelectedScriptCA: React.Dispatch<React.SetStateAction<string>>;
+    setScriptsListCA: React.Dispatch<React.SetStateAction<string>>;
+}
+interface ScriptData {
+    id: string,
+    name: string,
+    details: any
 }
 
-export const SCCD = (props: SCCDscriptProp) => {
+export const App = (props: AppProp) => {
     const [data, setData] = useState<string[]>([])
     const [isRunning, setIsRunning] = useState(false)
     const [total, setTotal] = useState(0)
     const [showFailed, setShowFailed] = useState(false)
 
+    const [scripts, setScripts] = useState<ScriptData[]>([]);
+
     useEffect(() => {
-        setTotal(SCCDScriptList.length)
-        let newData = [];
-        for (let i of SCCDScriptList) {
-            newData.push(i.id + '|' + 'not_ran');
+        const fetchData = async () => {
+            const response = await fetch(URL + '/' + props.name +'/scripts');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setScripts(data);
+            setTotal(scripts.length)
+            let newData = [];
+            for (let i of scripts) {
+                newData.push(i.id + '|' + 'not_ran');
+            }
+            setData(newData);
+        };
+        if (total === 0) {
+            fetchData();
         }
-        setData(newData);
-    }, []);
+    }, [scripts]);
 
     // count total of passed scripts
     const passed = data.filter(i => i.includes('True')).length
 
     return (
-        <>
+        <div>
             <div className="flex flex-row justify-end mb-5">
                 {
                     <label className={passed !== 0 ? 'slide-up' : 'opacity-0'}>
@@ -43,18 +61,18 @@ export const SCCD = (props: SCCDscriptProp) => {
                     </label>
                 }
             </div>
-            <div className="scrl w-full">
+            <div className="scrl w-full fade-in">
                 {
-                    SCCDScriptList
+                    scripts
                         .filter(i => showFailed ? !data[parseInt(i.id)].includes('True') : true)
                         .map((i) => {
                             return (
-                                <div className={`flex w-full items-center justify-between shadow-sm border-2 p-2 my-1 text-left font-medium text-gray-600 rounded-2xl hover:bg-gray-100 cursor-default + ${props.selectedScriptCS === 'SCCD|' + i.id + '|' + i.name ? 'border-gray-600 text-black' : ''}`}
+                                <div className={`flex w-full items-center justify-between shadow-sm border-2 p-2 my-1 text-left font-medium text-gray-600 rounded-2xl hover:bg-gray-100 cursor-default + ${props.selectedScriptCA === '' + props.name +'|' + i.id + '|' + i.name ? 'border-gray-600 text-black' : ''}`}
                                     key={i.name}
                                     onClick={() => {
-                                        props.setScriptsListCS(i.details.join('|'))
-                                        props.setResultCS(data[parseInt(i.id)].split('|')[1])
-                                        props.setSelectedScriptCS('SCCD|' + i.id + '|' + i.name)
+                                        props.setScriptsListCA(i.details.join('|'))
+                                        props.setResultCA(data[parseInt(i.id)].split('|')[1])
+                                        props.setSelectedScriptCA('' + props.name +'|' + i.id + '|' + i.name)
                                     }}
                                 >
                                     <div>
@@ -73,8 +91,8 @@ export const SCCD = (props: SCCDscriptProp) => {
                                             newData[index] = i.id + '|' + 'Running'
                                             setData(newData)
 
-                                            props.setResultCS('0')
-                                            const res = await fetch(URL + '/SCCD/' + i.id)
+                                            props.setResultCA('0')
+                                            const res = await fetch(URL + '/' + props.name +'/' + i.id)
                                             const values = await res.json()
                                             const newData2 = [...data]
                                             newData2[index] = i.id + '|' + values[0]
@@ -93,7 +111,7 @@ export const SCCD = (props: SCCDscriptProp) => {
                     <div
                         onClick={async () => {
                             setIsRunning(true)
-                            for (let i of SCCDScriptList) {
+                            for (let i of scripts) {
                                 const index = parseInt(i.id)
 
                                 setData(prevData => {
@@ -102,8 +120,8 @@ export const SCCD = (props: SCCDscriptProp) => {
                                     return newData;
                                 });
 
-                                props.setResultCS('0')
-                                const res = await fetch(URL + '/SCCD/' + i.id)
+                                props.setResultCA('0')
+                                const res = await fetch(URL + '/' + props.name +'/' + i.id)
                                 const values = await res.json()
 
                                 setData(prevData => {
@@ -119,6 +137,6 @@ export const SCCD = (props: SCCDscriptProp) => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

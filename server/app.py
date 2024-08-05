@@ -14,6 +14,34 @@ def home():
     print('server check successful')
     return jsonify(response='200')
 
+@app.route('/apps')
+def apps():
+    file_path='scripts'
+    apps=os.listdir(file_path)
+    return jsonify(apps)
+
+def parse_script_file(script, file_path):
+    with open(file_path, 'r') as file:
+        file.seek(0) 
+        lines = file.readlines()
+        name = lines[0].split('# ')[1].replace('\n','') 
+        details = lines[1].split('# ')[1].replace('\n','').split(', ') 
+        return {
+            'id': int(script.split('.')[0]),
+            'name': name,
+            'details': details
+        }
+@app.route('/<app>/scripts')
+def scripts(app):
+    folder = 'scripts'
+    script_files = os.listdir(folder + '/' + app)
+    script_data = []
+    for script in script_files:
+        file_path = os.path.join(folder, app, script)
+        script_data.append(parse_script_file(script, file_path))
+    data = sorted(script_data, key=lambda x: x['id'])
+    return jsonify(data)
+
 @app.route('/<app>/<id>')
 def run_script(app, id):
     file_path = f'scripts/{app}/{id}.py'

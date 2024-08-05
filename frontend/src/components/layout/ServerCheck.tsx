@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 
 const RedBanner = ({ onClick }: { onClick: () => void }) => {
     return (
-        <nav className="top-0 mt-14 left-0 fixed w-full bg-red-500 hover:brightness-95 px-2 dark:border-gray-700 dark:bg-gray-800 sm:px-4 flex flex-row justify-start cursor-pointer" onClick={onClick}>
-            <span>⚠️</span>
+        <nav className="w-full bg-red-500 text-white font-semibold hover:brightness-95 dark:border-gray-700 dark:bg-gray-800 sm:px-4 flex flex-row justify-start cursor-pointer" onClick={onClick}>
+            <span>⚠️ Server is not running</span>
         </nav>
     )
 }
 
 const GreenBanner = () => {
     return (
-        <nav className="top-0 mt-14 left-0 fixed w-full bg-green-500 hover:brightness-95 px-2 dark:border-gray-700 dark:bg-gray-800 sm:px-4 flex flex-row justify-end">
+        <nav className="w-full bg-green-500 hover:brightness-95 px-2 dark:border-gray-700 dark:bg-gray-800 sm:px-4 flex flex-row justify-start">
             <span>✅</span>
         </nav>
     )
@@ -25,7 +25,11 @@ const HiddenGreenBanner = () => {
     )
 }
 
-export const ServerCheck = () => {
+type serverProp = {
+    setServerIsRunningC: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ServerCheck = (props: serverProp) => {
     const [status, setStatus] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [hide, setHide] = useState(false);
@@ -34,6 +38,9 @@ export const ServerCheck = () => {
         const res = await fetch('http://localhost:5000/')
         const values = await res.json()
         setStatus(values.response === '200')
+        setTimeout(() => {
+            props.setServerIsRunningC(values.response === '200')
+        }, 1500);
     }
 
     useEffect(() => {

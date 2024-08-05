@@ -89,7 +89,7 @@
 
 /* FADE IN */
 .fade-in {
-    animation: fadein 0.7s forwards;
+    animation: fadein 1s forwards;
 }
 
 @keyframes fadein {
